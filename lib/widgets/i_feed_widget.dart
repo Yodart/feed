@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'feed_controller.dart';
+import '../data/controller.dart';
 
 /// The abstraction of a widget that renders and interacts with a Feed and it's controller.
 abstract class IFeedWidget<T extends Object> extends StatefulWidget {

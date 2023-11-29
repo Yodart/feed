@@ -1,9 +1,10 @@
+
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'package:flutter/material.dart';
 
-import 'feed.dart';
-import 'feed_filter.dart';
+import '../feed.dart';
+import 'filter.dart';
 
 /// The controller of a feed. It interacts with the feed itself and the scroll controller
 /// used inside of feed widgets.

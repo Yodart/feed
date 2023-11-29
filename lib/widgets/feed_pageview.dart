@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../feed_controller.dart';
-import '../i_feed_widget.dart';
+import '../data/controller.dart';
+import 'i_feed_widget.dart';
 
 /// A feed widget that renders a [PageView] with a page for each of its elements.
 class FeedPageView<T extends Object> extends IFeedWidget<T> {

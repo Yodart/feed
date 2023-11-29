@@ -1,10 +1,6 @@
-// ignore_for_file: avoid_setters_without_getters, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, curly_braces_in_flow_control_structures
-
 import 'package:flutter/material.dart';
 
-import 'feed_controller.dart';
-import 'feed_filter.dart';
-import 'i_feed_widget.dart';
+import 'filter.dart';
 
 /// The underlying data orchestration of a Feed.
 ///
@@ -105,7 +101,9 @@ class Feed<T extends Object> {
     if (filter == null) return content.value.addAll(newContent);
     final bool hasReachedFilterMaxReach = (content.value.length + newContent.length) >= filter!.maxReach;
     bool shouldAppendElement(T element) => !filter!.shouldFilterOut(element, content.value);
-    for (final T e in newContent) if (shouldAppendElement(e) || hasReachedFilterMaxReach) content.value.add(e);
+    for (final T e in newContent) {
+      if (shouldAppendElement(e) || hasReachedFilterMaxReach) content.value.add(e);
+    }
   }
 
   /// Exposes the items of the inner state of the feed

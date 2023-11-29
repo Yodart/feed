@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../feed_controller.dart';
-import '../i_feed_widget.dart';
+import '../data/controller.dart';
+import 'i_feed_widget.dart';
 
 /// A feed widget that renders a regular [ListView] with its elements.
 class FeedListView<T extends Object> extends IFeedWidget<T> {

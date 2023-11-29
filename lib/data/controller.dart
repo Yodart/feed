@@ -1,10 +1,8 @@
-
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'package:flutter/material.dart';
 
 import '../feed.dart';
-import 'filter.dart';
 
 /// The controller of a feed. It interacts with the feed itself and the scroll controller
 /// used inside of feed widgets.
@@ -112,6 +110,11 @@ class FeedController<T extends Object> {
 
   /// Returns the index of the provided object. If not present on the list it will return -1.
   int indexOf(T item) => feed.content.value.indexOf(item);
+
+  /// Returns the index of the first index in the list that satisfies the provided [test].
+  int indexWhere(bool Function(T) test) => feed.content.value.indexWhere(test);
+
+  T elementAt(int index) => feed.content.value.elementAt(index);
 
   /// Updates the fetch function of the feed, which will dictate how new queries will be made
   // ignore: avoid_setters_without_getters

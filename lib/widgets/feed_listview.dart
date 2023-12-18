@@ -107,6 +107,7 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
 
         return SmartRefresher(
           enablePullDown: true,
+          physics: widget.physics ?? const BouncingScrollPhysics(),
           enablePullUp: !widget.controller.feed.isExhausted,
           controller: refreshController,
           reverse: widget.reverse,

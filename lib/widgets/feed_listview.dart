@@ -78,7 +78,16 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
     if (isFeedEmpty && isFeedQueryExhausted) return widget.onEmpty;
     Widget Function(BuildContext, int) itemBuilder = (ctx, i) => const SizedBox();
     final bool shouldRenderLoadingItem = feedItemsLeght == 0;
-    if (shouldRenderLoadingItem) itemBuilder = loadingItemBuilder;
+    if (shouldRenderLoadingItem) {
+      itemBuilder = (ctx, i) {
+        return Column(
+          children: [
+            if (widget.header != null && i == 0) widget.header!,
+            loadingItemBuilder(ctx, i),
+          ],
+        );
+      };
+    }
     if (feedItemsLeght != 0) itemBuilder = itemBuilderCallback;
     final int targetItemCount = feedItemsLeght > 0 ? feedItemsLeght : 50;
 
@@ -107,6 +116,7 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
 
         return SmartRefresher(
           enablePullDown: true,
+          physics: widget.physics ?? const BouncingScrollPhysics(),
           enablePullUp: !widget.controller.feed.isExhausted,
           controller: refreshController,
           reverse: widget.reverse,

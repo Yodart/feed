@@ -22,6 +22,7 @@ class FeedListView<T extends Object> extends IFeedWidget<T> {
     final VoidCallback? onRefresh,
     final bool refreshOnAppResumed = false,
     this.header,
+    this.renderHeaderOnEmpty = true,
     this.onEmpty = const SizedBox(),
     this.bottomPadding = 200,
   }) : super(
@@ -50,6 +51,9 @@ class FeedListView<T extends Object> extends IFeedWidget<T> {
   /// the dock.
   final double bottomPadding;
 
+  /// Determines whether to render the header even when the feed list is empty.
+  final bool renderHeaderOnEmpty;
+
   @override
   State<FeedListView<T>> createState() => _FeedListViewState<T>();
 }
@@ -75,7 +79,14 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
     required bool isFeedQueryExhausted,
     required int feedItemsLeght,
   }) {
-    if (isFeedEmpty && isFeedQueryExhausted) return widget.onEmpty;
+    if (isFeedEmpty && isFeedQueryExhausted) {
+      return Column(
+        children: [
+          if (widget.renderHeaderOnEmpty) widget.header ?? const SizedBox(),
+          Expanded(child: widget.onEmpty),
+        ],
+      );
+    }
     Widget Function(BuildContext, int) itemBuilder = (ctx, i) => const SizedBox();
     final bool shouldRenderLoadingItem = feedItemsLeght == 0;
     if (shouldRenderLoadingItem) {

@@ -22,6 +22,8 @@ class FeedListView<T extends Object> extends IFeedWidget<T> {
     final VoidCallback? onRefresh,
     final bool refreshOnAppResumed = false,
     this.header,
+    this.refreshIndicator,
+    this.loadingIndicator,
     this.renderHeaderOnEmpty = true,
     this.onEmpty = const SizedBox(),
     this.bottomPadding = 200,
@@ -39,6 +41,12 @@ class FeedListView<T extends Object> extends IFeedWidget<T> {
 
   /// Header widget rendered directly above the first item of the feed.
   final Widget? header;
+
+  /// Widget rendered when the feed is refreshing, trigger by the pull.
+  final Widget? refreshIndicator;
+
+  /// Widget rendered when the feed is loading more content, triggered by the user having reaching the bottom.
+  final Widget? loadingIndicator;
 
   /// Widget rendered when the feed has absolutely no elements after the first query.
   final Widget onEmpty;
@@ -134,8 +142,8 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
           scrollDirection: widget.scrollDirection,
           onRefresh: onRefreshCallback,
           onLoading: onLoadingCallback,
-          header: CustomHeader(builder: (_, status) => const SizedBox()),
-          footer: CustomFooter(builder: (_, status) => const SizedBox()),
+          header: CustomHeader(builder: (_, status) => widget.refreshIndicator ?? const SizedBox()),
+          footer: CustomFooter(builder: (_, status) => widget.loadingIndicator ?? const SizedBox()),
           child: child,
         );
       },

@@ -55,48 +55,52 @@ class FeedListView<T extends Object> extends IFeedWidget<T> {
 }
 
 class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView<T>, T> {
-  Widget itemBuilderCallback(BuildContext context, int index) {
-    final bool isItemTheLast = index == (widget.controller.feed.items.length - 1);
-    final bool shouldRenderBottomPadding = isItemTheLast && widget.controller.feed.isExhausted;
-    return Column(
-      children: [
-        if (widget.header != null && index == 0) widget.header!,
-        widget.itemBuilder(context, index, widget.controller.feed.items[index]),
-        if (shouldRenderBottomPadding) Container(height: widget.bottomPadding)
-      ],
-    );
-  }
-
   @override
   Widget get defaultLoadingWidget => const SizedBox();
 
-  Widget handleChildBuild({
+  List<Widget> _itemsBuilder(BuildContext context, bool isFeedLoading, int index) {
+    if (isFeedLoading) {
+      return [loadingItemBuilder(context, index)];
+    }
+    final bool isItemTheLast = index == (widget.controller.feed.items.length - 1);
+    final bool shouldRenderBottomPadding = isItemTheLast && widget.controller.feed.isExhausted;
+    return [
+      widget.itemBuilder(context, index, widget.controller.feed.items[index]),
+      if (shouldRenderBottomPadding) Container(height: widget.bottomPadding)
+    ];
+  }
+
+  Widget _handleChildBuild({
     required bool isFeedEmpty,
     required bool isFeedQueryExhausted,
-    required int feedItemsLeght,
+    required int feedItemsLength,
   }) {
-    if (isFeedEmpty && isFeedQueryExhausted) return widget.onEmpty;
-    Widget Function(BuildContext, int) itemBuilder = (ctx, i) => const SizedBox();
-    final bool shouldRenderLoadingItem = feedItemsLeght == 0;
-    if (shouldRenderLoadingItem) {
-      itemBuilder = (ctx, i) {
-        return Column(
-          children: [
-            if (widget.header != null && i == 0) widget.header!,
-            loadingItemBuilder(ctx, i),
-          ],
-        );
-      };
+    if (isFeedEmpty && isFeedQueryExhausted) {
+      return ListView(
+        children: [
+          Column(
+            children: [
+              if (widget.header != null) widget.header!,
+              widget.onEmpty,
+            ],
+          )
+        ],
+      );
     }
-    if (feedItemsLeght != 0) itemBuilder = itemBuilderCallback;
-    final int targetItemCount = feedItemsLeght > 0 ? feedItemsLeght : 50;
+    final bool isFeedLoading = feedItemsLength == 0;
+    final int targetItemCount = feedItemsLength > 0 ? feedItemsLength : 50;
 
     return ListView.builder(
       controller: widget.controller.scrollController,
       physics: widget.physics ?? const BouncingScrollPhysics(),
       padding: feedPadding,
       itemCount: targetItemCount,
-      itemBuilder: itemBuilder,
+      itemBuilder: (context, index) => Column(
+        children: [
+          if (widget.header != null && index == 0) widget.header!,
+          ..._itemsBuilder(context, isFeedLoading, index),
+        ],
+      ),
       addRepaintBoundaries: false,
       addAutomaticKeepAlives: widget.keepAlive,
     );
@@ -109,10 +113,11 @@ class _FeedListViewState<T extends Object> extends IFeedWidgetState<FeedListView
     return ValueListenableBuilder<List<T>>(
       valueListenable: widget.controller.feed.content,
       builder: (context, value, _) {
-        final Widget child = handleChildBuild(
-            feedItemsLeght: value.length,
-            isFeedEmpty: widget.controller.feed.items.isEmpty,
-            isFeedQueryExhausted: widget.controller.feed.isExhausted);
+        final Widget child = _handleChildBuild(
+          feedItemsLength: value.length,
+          isFeedEmpty: widget.controller.feed.items.isEmpty,
+          isFeedQueryExhausted: widget.controller.feed.isExhausted,
+        );
 
         return SmartRefresher(
           enablePullDown: true,
